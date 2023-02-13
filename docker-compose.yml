@@ -16,6 +16,8 @@ services:
 ###< doctrine/doctrine-bundle ###
   adminer:
     image: adminer
+    environment:
+      ADMINER_DESIGN: lucas-sandery
     ports:
       - 8080:8080
 
