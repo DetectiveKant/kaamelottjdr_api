@@ -27,9 +27,13 @@ class Job
     #[ORM\OneToMany(mappedBy: 'job', targetEntity: JobResource::class, orphanRemoval: true)]
     private Collection $jobResources;
 
+    #[ORM\OneToMany(mappedBy: 'job', targetEntity: JobAbility::class, orphanRemoval: true)]
+    private Collection $jobAbilities;
+
     public function __construct()
     {
         $this->jobResources = new ArrayCollection();
+        $this->jobAbilities = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -85,6 +89,36 @@ class Job
             // set the owning side to null (unless already changed)
             if ($jobResource->getJob() === $this) {
                 $jobResource->setJob(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, JobAbility>
+     */
+    public function getJobAbilities(): Collection
+    {
+        return $this->jobAbilities;
+    }
+
+    public function addJobAbility(JobAbility $jobAbility): self
+    {
+        if (!$this->jobAbilities->contains($jobAbility)) {
+            $this->jobAbilities->add($jobAbility);
+            $jobAbility->setJob($this);
+        }
+
+        return $this;
+    }
+
+    public function removeJobAbility(JobAbility $jobAbility): self
+    {
+        if ($this->jobAbilities->removeElement($jobAbility)) {
+            // set the owning side to null (unless already changed)
+            if ($jobAbility->getJob() === $this) {
+                $jobAbility->setJob(null);
             }
         }
 

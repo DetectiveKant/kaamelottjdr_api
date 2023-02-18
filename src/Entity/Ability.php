@@ -42,11 +42,15 @@ class Ability
     #[ORM\OneToMany(mappedBy: 'ability', targetEntity: RaceAbility::class, orphanRemoval: true)]
     private Collection $raceAbilities;
 
+    #[ORM\OneToMany(mappedBy: 'ability', targetEntity: JobAbility::class, orphanRemoval: true)]
+    private Collection $jobAbilities;
+
     public function __construct()
     {
         $this->effects = new ArrayCollection();
         $this->abilityResources = new ArrayCollection();
         $this->raceAbilities = new ArrayCollection();
+        $this->jobAbilities = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -192,6 +196,36 @@ class Ability
             // set the owning side to null (unless already changed)
             if ($raceAbility->getAbility() === $this) {
                 $raceAbility->setAbility(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, JobAbility>
+     */
+    public function getJobAbilities(): Collection
+    {
+        return $this->jobAbilities;
+    }
+
+    public function addJobAbility(JobAbility $jobAbility): self
+    {
+        if (!$this->jobAbilities->contains($jobAbility)) {
+            $this->jobAbilities->add($jobAbility);
+            $jobAbility->setAbility($this);
+        }
+
+        return $this;
+    }
+
+    public function removeJobAbility(JobAbility $jobAbility): self
+    {
+        if ($this->jobAbilities->removeElement($jobAbility)) {
+            // set the owning side to null (unless already changed)
+            if ($jobAbility->getAbility() === $this) {
+                $jobAbility->setAbility(null);
             }
         }
 
