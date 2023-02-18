@@ -36,9 +36,19 @@ class Unit
     #[ORM\ManyToMany(targetEntity: Player::class, inversedBy: 'units')]
     private Collection $players;
 
+    #[ORM\ManyToOne]
+    private ?Race $race = null;
+
+    #[ORM\ManyToOne]
+    private ?Job $job = null;
+
+    #[ORM\ManyToMany(targetEntity: Ability::class)]
+    private Collection $abilities;
+
     public function __construct()
     {
         $this->players = new ArrayCollection();
+        $this->abilities = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -126,6 +136,54 @@ class Unit
     public function removePlayer(Player $player): self
     {
         $this->players->removeElement($player);
+
+        return $this;
+    }
+
+    public function getRace(): ?Race
+    {
+        return $this->race;
+    }
+
+    public function setRace(?Race $race): self
+    {
+        $this->race = $race;
+
+        return $this;
+    }
+
+    public function getJob(): ?Job
+    {
+        return $this->job;
+    }
+
+    public function setJob(?Job $job): self
+    {
+        $this->job = $job;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Ability>
+     */
+    public function getAbilities(): Collection
+    {
+        return $this->abilities;
+    }
+
+    public function addAbility(Ability $ability): self
+    {
+        if (!$this->abilities->contains($ability)) {
+            $this->abilities->add($ability);
+        }
+
+        return $this;
+    }
+
+    public function removeAbility(Ability $ability): self
+    {
+        $this->abilities->removeElement($ability);
 
         return $this;
     }
