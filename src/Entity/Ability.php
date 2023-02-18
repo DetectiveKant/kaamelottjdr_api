@@ -36,9 +36,13 @@ class Ability
     #[ORM\ManyToMany(targetEntity: Effect::class, inversedBy: 'abilities')]
     private Collection $effects;
 
+    #[ORM\OneToMany(mappedBy: 'ability', targetEntity: AbilityResource::class, orphanRemoval: true)]
+    private Collection $abilityResources;
+
     public function __construct()
     {
         $this->effects = new ArrayCollection();
+        $this->abilityResources = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -126,6 +130,36 @@ class Ability
     public function removeEffect(Effect $effect): self
     {
         $this->effects->removeElement($effect);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, AbilityResource>
+     */
+    public function getAbilityResources(): Collection
+    {
+        return $this->abilityResources;
+    }
+
+    public function addAbilityResource(AbilityResource $abilityResource): self
+    {
+        if (!$this->abilityResources->contains($abilityResource)) {
+            $this->abilityResources->add($abilityResource);
+            $abilityResource->setAbility($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAbilityResource(AbilityResource $abilityResource): self
+    {
+        if ($this->abilityResources->removeElement($abilityResource)) {
+            // set the owning side to null (unless already changed)
+            if ($abilityResource->getAbility() === $this) {
+                $abilityResource->setAbility(null);
+            }
+        }
 
         return $this;
     }
