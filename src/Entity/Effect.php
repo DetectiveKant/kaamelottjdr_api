@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\EffectRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EffectRepository::class)]
@@ -26,6 +28,14 @@ class Effect
 
     #[ORM\Column(nullable: true)]
     private ?array $script = [];
+
+    #[ORM\ManyToMany(targetEntity: Ability::class, mappedBy: 'effects')]
+    private Collection $abilities;
+
+    public function __construct()
+    {
+        $this->abilities = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -76,6 +86,33 @@ class Effect
     public function setScript(?array $script): self
     {
         $this->script = $script;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Ability>
+     */
+    public function getAbilities(): Collection
+    {
+        return $this->abilities;
+    }
+
+    public function addAbility(Ability $ability): self
+    {
+        if (!$this->abilities->contains($ability)) {
+            $this->abilities->add($ability);
+            $ability->addEffect($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAbility(Ability $ability): self
+    {
+        if ($this->abilities->removeElement($ability)) {
+            $ability->removeEffect($this);
+        }
 
         return $this;
     }
