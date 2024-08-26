@@ -39,9 +39,6 @@ class Unit
     #[ORM\ManyToOne]
     private ?Race $race = null;
 
-    #[ORM\ManyToOne]
-    private ?Job $job = null;
-
     #[ORM\ManyToMany(targetEntity: Ability::class)]
     private Collection $abilities;
 
@@ -148,18 +145,6 @@ class Unit
     public function setRace(?Race $race): self
     {
         $this->race = $race;
-
-        return $this;
-    }
-
-    public function getJob(): ?Job
-    {
-        return $this->job;
-    }
-
-    public function setJob(?Job $job): self
-    {
-        $this->job = $job;
 
         return $this;
     }
